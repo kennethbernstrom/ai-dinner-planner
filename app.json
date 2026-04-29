@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "ai-dinner-planner",
-    "slug": "ai-dinner-planner",
+    "slug": "dinnerplanner",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -23,7 +23,8 @@
     },
     "web": {
       "output": "static",
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "bundler": "metro"
     },
     "plugins": [
       "expo-router",
@@ -38,11 +39,25 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "@react-native-community/datetimepicker"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "fef845f0-a122-4247-9173-c43c14e2ca1b"
+      }
+    },
+    "owner": "kenneth.bernstrom",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/fef845f0-a122-4247-9173-c43c14e2ca1b"
     }
   }
 }

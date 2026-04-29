@@ -1,41 +1,41 @@
 /**
- * Below are the colors that are used in the app. The colors are defined in the light and dark mode.
- * There are many other ways to style your app. For example, [Nativewind](https://www.nativewind.dev/), [Tamagui](https://tamagui.dev/), [unistyles](https://reactnativeunistyles.vercel.app), etc.
+ * Theme configuration for the dinner planner app
+ * Supports light and dark mode with colorful, modern design
  */
 
-import { Platform } from 'react-native';
+import { Platform } from 'react-native'
+import { colors, lightColors, darkColors } from './colors'
+import { designTokens } from './design'
 
-const tintColorLight = '#0a7ea4';
-const tintColorDark = '#fff';
+const tintColorLight = colors.primary[500]
+const tintColorDark = colors.primary[400]
 
 export const Colors = {
   light: {
-    text: '#11181C',
-    background: '#fff',
+    ...lightColors,
+    text: lightColors.text,
+    background: lightColors.background,
     tint: tintColorLight,
-    icon: '#687076',
-    tabIconDefault: '#687076',
+    icon: lightColors.textSecondary,
+    tabIconDefault: lightColors.textSecondary,
     tabIconSelected: tintColorLight,
   },
   dark: {
-    text: '#ECEDEE',
-    background: '#151718',
+    ...darkColors,
+    text: darkColors.text,
+    background: darkColors.background,
     tint: tintColorDark,
-    icon: '#9BA1A6',
-    tabIconDefault: '#9BA1A6',
+    icon: darkColors.textSecondary,
+    tabIconDefault: darkColors.textSecondary,
     tabIconSelected: tintColorDark,
   },
-};
+}
 
 export const Fonts = Platform.select({
   ios: {
-    /** iOS `UIFontDescriptorSystemDesignDefault` */
     sans: 'system-ui',
-    /** iOS `UIFontDescriptorSystemDesignSerif` */
     serif: 'ui-serif',
-    /** iOS `UIFontDescriptorSystemDesignRounded` */
     rounded: 'ui-rounded',
-    /** iOS `UIFontDescriptorSystemDesignMonospaced` */
     mono: 'ui-monospace',
   },
   default: {
@@ -50,4 +50,7 @@ export const Fonts = Platform.select({
     rounded: "'SF Pro Rounded', 'Hiragino Maru Gothic ProN', Meiryo, 'MS PGothic', sans-serif",
     mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
   },
-});
+})
+
+export { designTokens }
+export { colors, lightColors, darkColors }

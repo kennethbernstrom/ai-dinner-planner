@@ -1,0 +1,201 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Family {
+  id          Int      @id @default(autoincrement())
+  name        String
+  inviteCode  String   @unique @map("invite_code")
+  createdBy   String   @map("created_by") // clerkUserId of creator
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  members     FamilyMember[]
+  meals       Meal[]
+  weeklyPlans WeeklyPlan[]
+
+  @@map("families")
+  @@index([inviteCode])
+  @@index([createdBy])
+}
+
+model FamilyMember {
+  id          Int      @id @default(autoincrement())
+  familyId    Int      @map("family_id")
+  clerkUserId String   @map("clerk_user_id")
+  role        String   @default("member") // "admin" | "member"
+  permissions String   @default("read") // "read" | "write"
+  joinedAt    DateTime @default(now()) @map("joined_at")
+
+  // Relations
+  family Family @relation(fields: [familyId], references: [id], onDelete: Cascade)
+
+  @@map("family_members")
+  @@index([familyId])
+  @@index([clerkUserId])
+  @@unique([familyId, clerkUserId])
+}
+
+model Meal {
+  id          Int      @id @default(autoincrement())
+  familyId    Int      @map("family_id")
+  clerkUserId String   @map("clerk_user_id") // Creator of the meal
+  title       String
+  description String?  @db.Text
+  instructions String? @db.Text
+  imageUrl    String?  @map("image_url")
+  tags        Json?    // Array of strings like ["vegan", "quick", "kids"]
+  sourceUrl   String?  @map("source_url")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  // Relations
+  family      Family         @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  planMeals   PlanMeal[]
+  favorites   MealFavorite[]
+  ingredients MealIngredient[]
+
+  @@map("meals")
+  @@index([familyId])
+  @@index([clerkUserId])
+}
+
+model WeeklyPlan {
+  id            Int        @id @default(autoincrement())
+  familyId      Int        @map("family_id")
+  clerkUserId   String     @map("clerk_user_id") // Creator of the plan
+  name          String
+  weekStartDate DateTime   @map("week_start_date")
+  visibility    String     @default("private") // "private" | "shared"
+  createdAt     DateTime   @default(now()) @map("created_at")
+  updatedAt     DateTime   @updatedAt @map("updated_at")
+
+  // Relations
+  family        Family     @relation(fields: [familyId], references: [id], onDelete: Cascade)
+  planMeals     PlanMeal[]
+  shares        PlanShare[]
+  shoppingLists ShoppingList[]
+
+  @@map("weekly_plans")
+  @@index([familyId])
+  @@index([clerkUserId])
+  @@index([weekStartDate])
+}
+
+model PlanMeal {
+  id         Int      @id @default(autoincrement())
+  planId     Int      @map("plan_id")
+  mealId     Int      @map("meal_id")
+  dayOfWeek  Int?     @map("day_of_week") // 0-6 (Monday-Sunday), null if not yet scheduled
+  mealSlot   String   @default("dinner") @map("meal_slot") // "breakfast", "lunch", "dinner"
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  // Relations
+  plan WeeklyPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+  meal Meal       @relation(fields: [mealId], references: [id], onDelete: Cascade)
+
+  @@map("plan_meals")
+  @@index([planId])
+  @@index([mealId])
+  @@index([planId, dayOfWeek, mealSlot])
+}
+
+model PlanShare {
+  id          Int        @id @default(autoincrement())
+  planId      Int        @map("plan_id")
+  clerkUserId String     @map("clerk_user_id")
+  role        String     @default("viewer") // "owner" | "editor" | "viewer"
+  createdAt   DateTime   @default(now()) @map("created_at")
+
+  // Relations
+  plan WeeklyPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@map("plan_shares")
+  @@index([planId])
+  @@index([clerkUserId])
+  @@unique([planId, clerkUserId])
+}
+
+model MealFavorite {
+  id          Int      @id @default(autoincrement())
+  clerkUserId String   @map("clerk_user_id")
+  mealId      Int      @map("meal_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  // Relations
+  meal Meal @relation(fields: [mealId], references: [id], onDelete: Cascade)
+
+  @@map("meal_favorites")
+  @@index([clerkUserId])
+  @@index([mealId])
+  @@unique([clerkUserId, mealId])
+}
+
+model MealIngredient {
+  id       Int      @id @default(autoincrement())
+  mealId  Int      @map("meal_id")
+  name    String
+  quantity String?
+  unit    String?
+  category String?
+
+  // Relations
+  meal Meal @relation(fields: [mealId], references: [id], onDelete: Cascade)
+
+  @@map("meal_ingredients")
+  @@index([mealId])
+}
+
+model UserPushToken {
+  id           Int      @id @default(autoincrement())
+  clerkUserId  String   @map("clerk_user_id")
+  expoPushToken String  @map("expo_push_token")
+  deviceId     String?  @map("device_id")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("user_push_tokens")
+  @@index([clerkUserId])
+  @@unique([clerkUserId, deviceId])
+}
+
+model ShoppingList {
+  id        Int      @id @default(autoincrement())
+  planId    Int      @map("plan_id")
+  createdBy String   @map("created_by")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  // Relations
+  plan  WeeklyPlan         @relation(fields: [planId], references: [id], onDelete: Cascade)
+  items ShoppingListItem[]
+
+  @@map("shopping_lists")
+  @@index([planId])
+  @@index([createdBy])
+}
+
+model ShoppingListItem {
+  id             Int           @id @default(autoincrement())
+  shoppingListId Int           @map("shopping_list_id")
+  name           String
+  quantity       String?
+  category       String?
+  checked        Boolean       @default(false)
+  createdAt      DateTime      @default(now()) @map("created_at")
+
+  // Relations
+  shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+
+  @@map("shopping_list_items")
+  @@index([shoppingListId])
+}
+

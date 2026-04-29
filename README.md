@@ -1,50 +1,135 @@
-# Welcome to your Expo app 👋
+# Dinner Planner - AI-Powered Meal Planning App
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+A modern, colorful Micro-SaaS app for creating and managing weekly dinner plans with AI assistance.
 
-## Get started
+## Features
 
-1. Install dependencies
+### MVP (Free Tier)
+- ✅ User authentication with Clerk (email/password + Google)
+- ✅ Onboarding wizard (dietary preferences + household size)
+- ✅ Create and manage weekly dinner plans
+- ✅ Add/edit/remove meals in plans
+- ✅ Meal library with search
+- ✅ Share plans with other users
+- ✅ Image upload for meals
+- ✅ Push notifications for invites
+- ✅ Modern, colorful UI with smooth animations
 
-   ```bash
-   npm install
-   ```
+### Premium Tiers (Coming Soon)
+- Plus ($5-7/mo): Unlimited plans, favorites, drag-and-drop
+- Pro ($12-15/mo): AI meal suggestions, shopping lists
+- Premium ($20-25/mo): Full AI automation, advanced collaboration
 
-2. Start the app
+## Tech Stack
 
-   ```bash
-   npx expo start
-   ```
+- **Frontend**: React Native + Expo
+- **Styling**: NativeWind (Tailwind CSS)
+- **Backend**: Serverless API routes (Fetch API)
+- **Database**: PostgreSQL on Supabase with Prisma ORM
+- **Auth**: Clerk
+- **Storage**: Supabase Storage
+- **AI**: OpenAI API (server-side)
+- **Notifications**: Expo Notifications
 
-In the output, you'll find options to open the app in a
+## Getting Started
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Prerequisites
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- Node.js v22.12 (use `nvm use v22.12`)
+- Expo CLI
+- Supabase account
+- Clerk account
 
-## Get a fresh project
+### Installation
 
-When you're ready, run:
-
+1. Install dependencies:
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+2. Set up environment variables:
+```bash
+cp .env.example .env
+# Fill in your API keys and configuration
+```
 
-## Learn more
+3. Set up Prisma:
+```bash
+npx prisma generate
+npx prisma migrate dev
+```
 
-To learn more about developing your project with Expo, look at the following resources:
+4. Start the development server:
+```bash
+npm start
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Project Structure
 
-## Join the community
+```
+├── app/                    # Expo Router pages
+│   ├── (auth)/            # Authentication routes
+│   ├── (home)/            # Main app routes
+│   └── (onboarding)/      # Onboarding flow
+├── components/            # React components
+│   ├── ui/                # Reusable UI components
+│   ├── meals/             # Meal-related components
+│   ├── plans/             # Plan-related components
+│   └── sharing/           # Sharing components
+├── hooks/                 # Custom React hooks
+├── lib/                   # Utilities and services
+│   ├── api/               # API client and endpoints
+│   └── utils/              # Helper functions
+├── types/                 # TypeScript type definitions
+├── constants/             # Design tokens and constants
+├── prisma/                # Database schema
+└── docs/                  # Feature notes, setup guides, SQL migrations (see subfolders)
+```
 
-Join our community of developers creating universal apps.
+Implementation write-ups, setup guides, migration SQL, and planning notes live under `docs/` (`implementations/`, `setup/`, `migrations/`, `plans/`, plus `guides/` and `api/`).
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Code Architecture
+
+- **Pages**: Minimal logic (<100 lines), orchestration only
+- **Components**: Single-responsibility, composable
+- **Hooks**: Business logic and data fetching
+- **Services**: API clients and external integrations
+- **Utils**: Pure utility functions
+
+## Design System
+
+The app uses a modern, colorful design system with:
+- Warm, food-inspired color palette
+- Consistent spacing (4px grid)
+- Smooth animations and transitions
+- Accessible touch targets (44px minimum)
+- Dark mode support
+
+## Development
+
+### Running the App
+
+```bash
+# iOS
+npm run ios
+
+# Android
+npm run android
+
+# Web
+npm run web
+```
+
+### Database Migrations
+
+```bash
+# Create a new migration
+npx prisma migrate dev --name migration_name
+
+# Apply migrations
+npx prisma migrate deploy
+```
+
+## License
+
+Private - All rights reserved
